@@ -40,7 +40,6 @@ import prisma from '@/lib/prisma';
  *       200:
  *         description: Jobs deleted successfully
  */
-
 export async function GET() {
     try {
         const jobs = await prisma.job.findMany({

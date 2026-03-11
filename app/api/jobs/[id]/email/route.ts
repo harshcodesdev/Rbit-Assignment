@@ -26,7 +26,6 @@ import { sendSummaryEmail } from '@/lib/services/mailer';
  *       200:
  *         description: Email sent successfully
  */
-
 export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> }

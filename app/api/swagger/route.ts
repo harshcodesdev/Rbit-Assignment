@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export const GET = async () => {
     const spec = createSwaggerSpec({
-        apiFolder: "app/api",
+        apiFolder: "./app/api",
         definition: {
             openapi: "3.0.0",
             info: {
@@ -21,16 +21,6 @@ export const GET = async () => {
                     description: "Local Development Server",
                 },
             ],
-            components: {
-                securitySchemes: {
-                    BearerAuth: {
-                        type: "http",
-                        scheme: "bearer",
-                        bearerFormat: "JWT",
-                    },
-                },
-            },
-            security: [],
         },
     });
 

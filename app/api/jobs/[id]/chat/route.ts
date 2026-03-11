@@ -38,7 +38,6 @@ import prisma from '@/lib/prisma';
  *       200:
  *         description: AI response generated
  */
-
 export async function GET(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
