@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+      GEMINI_API_KEY: "dummy_key"
+      RESEND_API_KEY: "dummy_key"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
     
     steps:
     - uses: actions/checkout@v3
