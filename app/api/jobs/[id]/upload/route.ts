@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { parseFile } from '@/lib/services/dataParser';
-import { generateSummary } from '@/lib/services/llm';
+import { generateSummary, generateAnalysisTags } from '@/lib/services/llm';
 import { sendSummaryEmail } from '@/lib/services/mailer';
 import prisma from '@/lib/prisma';
 
@@ -9,7 +9,8 @@ import prisma from '@/lib/prisma';
  * @swagger
  * /api/jobs/{id}/upload:
  *   post:
- *     summary: Upload a sales data file and trigger processing
+ *     summary: Upload sales data and trigger AI processing
+ *     description: Parses CSV/Excel data, detects anomaly tags, and generates an executive summary.
  *     parameters:
  *       - in: path
  *         name: id
@@ -28,7 +29,7 @@ import prisma from '@/lib/prisma';
  *                 format: binary
  *     responses:
  *       200:
- *         description: Processing complete
+ *         description: Processing started successfully
  */
 
 export async function POST(
@@ -87,8 +88,9 @@ async function processJobInBackground(jobId: string, buffer: Buffer, fileType: s
         // 2. Generate summary via LLM
         const summaryStr = await generateSummary(parsedData);
 
-        await updateProgress("Finalizing & preparing email...");
-        await sleep(1500); // Artificial delay for UX
+        await updateProgress("Finalizing & detecting trends...");
+        const tags = await generateAnalysisTags(parsedData);
+        await sleep(1000); // Artificial delay for UX
 
         await updateProgress("Sending summary email...");
         // 3. Send Email
@@ -99,7 +101,7 @@ async function processJobInBackground(jobId: string, buffer: Buffer, fileType: s
         // 4. Update database
         await prisma.job.update({
             where: { id: jobId },
-            data: { status: 'COMPLETED', summary: summaryStr }
+            data: { status: 'COMPLETED', summary: summaryStr, analysisTags: tags }
         });
     } catch (error) {
         console.error('Background Processing Error:', error);

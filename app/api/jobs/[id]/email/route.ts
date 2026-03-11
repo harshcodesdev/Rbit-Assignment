@@ -2,6 +2,31 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { sendSummaryEmail } from '@/lib/services/mailer';
 
+/**
+ * @swagger
+ * /api/jobs/{id}/email:
+ *   post:
+ *     summary: Forward job report to an email
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email sent successfully
+ */
+
 export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> }

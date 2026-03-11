@@ -65,15 +65,17 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground font-sans">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-lg"
       >
-        <Card className="border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl">
-          <h2 className="mb-2 text-2xl font-bold tracking-tight text-white">Upload Sales Data</h2>
-          <p className="mb-8 text-sm text-gray-400">
+        <Card className="border-4 border-foreground bg-white p-8 text-center shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rounded-2xl">
+          <h2 className="mb-2 w-max mx-auto px-2 py-1 bg-secondary border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-2xl font-black tracking-tighter text-foreground uppercase">
+            Upload Sales Data
+          </h2>
+          <p className="mb-8 mt-4 font-bold text-foreground/70">
             Drag and drop your .csv or .xlsx file to begin processing.
           </p>
 
@@ -81,8 +83,8 @@ export default function UploadPage() {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative flex min-h-[250px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
-              isDragOver ? "border-primary bg-primary/10" : "border-white/20 bg-black/20"
+            className={`relative flex min-h-[250px] cursor-pointer flex-col items-center justify-center rounded-xl border-4 transition-all ${
+              isDragOver ? "border-solid border-primary bg-primary/10 scale-[1.02]" : "border-dashed border-foreground/30 bg-foreground/5 hover:bg-foreground/10 hover:border-foreground/50"
             }`}
           >
             <input
@@ -94,24 +96,24 @@ export default function UploadPage() {
             
             {status === "idle" && !file && (
               <motion.div className="flex flex-col items-center">
-                <UploadCloud className="mb-4 h-12 w-12 text-gray-400" />
-                <p className="font-medium text-gray-300">Click or drag file to this area</p>
-                <p className="mt-1 text-xs text-gray-500">Supported formats: CSV, XLSX</p>
+                <UploadCloud className="mb-4 h-14 w-14 text-foreground/40" />
+                <p className="font-bold text-lg text-foreground">Click or drag file to this area</p>
+                <p className="mt-2 text-sm font-medium text-foreground/50 border border-foreground/20 bg-white px-2 py-0.5 rounded">Supported formats: CSV, XLSX</p>
               </motion.div>
             )}
 
             {file && status === "idle" && (
               <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center">
-                <FileSpreadsheet className="mb-4 h-12 w-12 text-blue-400" />
-                <p className="font-semibold text-white">{file.name}</p>
-                <p className="mt-1 text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
+                <FileSpreadsheet className="mb-4 h-14 w-14 text-primary" />
+                <p className="font-black text-xl text-foreground bg-primary/10 px-3 py-1 border-2 border-primary">{file.name}</p>
+                <p className="mt-2 font-bold text-sm text-foreground/60">{(file.size / 1024).toFixed(2)} KB</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     uploadFile();
                   }}
-                  className="relative z-50 mt-6 rounded-full bg-primary px-8 py-2.5 font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary/90"
+                  className="relative z-50 mt-8 rounded-full border-2 border-foreground bg-foreground px-8 py-3 text-base font-black text-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] transition-all hover:shadow-none active:scale-95"
                 >
                   Upload & Analyze
                 </button>
@@ -120,17 +122,17 @@ export default function UploadPage() {
 
             {status === "uploading" && (
               <motion.div className="flex flex-col items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
-                <p className="font-medium text-white">Uploading...</p>
-                <p className="mt-1 text-xs text-gray-400">Taking you back to the dashboard...</p>
+                <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
+                <p className="font-black text-lg text-foreground uppercase tracking-widest">Uploading...</p>
+                <p className="mt-2 text-sm font-bold text-foreground/60">Taking you back to the dashboard...</p>
               </motion.div>
             )}
 
             {status === "success" && (
               <motion.div className="flex flex-col items-center" initial={{ scale: 0.5 }} animate={{ scale: 1 }}>
-                <CheckCircle2 className="mb-4 h-12 w-12 text-green-500" />
-                <p className="font-medium text-white">Success!</p>
-                <p className="mt-1 text-xs text-gray-400">Redirecting to dashboard...</p>
+                <CheckCircle2 className="mb-4 h-14 w-14 text-green-600" />
+                <p className="font-black text-2xl text-foreground uppercase">Success!</p>
+                <p className="mt-2 text-sm font-bold text-foreground/60">Redirecting to dashboard...</p>
               </motion.div>
             )}
           </div>

@@ -24,3 +24,59 @@ export const generateSummary = async (data: any[]): Promise<string> => {
         throw new Error("Failed to generate summary via Gemini API");
     }
 };
+
+export const generateAnalysisTags = async (data: any[]): Promise<string[]> => {
+    try {
+        const prompt = `
+      Analyze this sales data and return ONLY a JSON array of 3-5 short, highly descriptive tags (max 15 characters each) that highlight anomalies or significant trends.
+      Examples: "Revenue Spike", "Low Inventory", "Regional Dip", "Peak Performance", "Trend Shift".
+      Return ONLY the JSON array, no formatting.
+
+      Data: ${JSON.stringify(data.slice(0, 50))}
+    `;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: prompt,
+        });
+
+        const text = response.text || "[]";
+        try {
+            return JSON.parse(text.replace(/```json|```/g, "").trim());
+        } catch {
+            return ["Data Insights", "Anomaly Check"];
+        }
+    } catch (error) {
+        console.error("Tag Generation Error:", error);
+        return ["Analysis Generated"];
+    }
+};
+
+export const answerDataQuestion = async (data: any[], question: string, history: { role: string, content: string }[]): Promise<string> => {
+    try {
+        const chatHistory = history.map(h => ({
+            role: h.role === 'user' ? 'user' : 'model',
+            parts: [{ text: h.content }]
+        }));
+
+        const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const chat = model.startChat({
+            history: chatHistory,
+            generationConfig: {
+                maxOutputTokens: 500,
+            },
+        });
+
+        const systemContext = `You are "RabbitAI", a specialized sales data assistant. 
+        You have access to the following sales data context to answer the user's question accurately.
+        Be concise, professional, and data-driven. 
+        Context Data Sample: ${JSON.stringify(data.slice(0, 100))}`;
+
+        const result = await chat.sendMessage(`${systemContext}\n\nUser Question: ${question}`);
+        const response = await result.response;
+        return response.text();
+    } catch (error) {
+        console.error("Chat Error:", error);
+        return "I'm sorry, I'm having trouble analyzing the data for your question right now.";
+    }
+};

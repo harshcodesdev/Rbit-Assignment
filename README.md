@@ -1,58 +1,179 @@
-# Rabbit-Sync: Sales Insight Automator
+<div align="center">
 
-## The Engineer's Log
+# 📊 RabbitAI: Sales Insight Automator
 
-Welcome to **Rabbit-Sync**, an internal tool created for the RabbitAI sales team to instantly distill massive `.csv` and `.xlsx` figures into an actionable AI-generated executive briefing.
+**AI-powered sales data analysis with executive summary delivery & interactive Q&A**
 
-This repository serves as a functional, containerized prototype built under a 3-hour constraint as part of the AI Cloud DevOps Engineer evaluation.
+[![CI Pipeline](https://github.com/tushar-Ruhela/rabbitai-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/tushar-Ruhela/rabbitai-agent/actions)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
+[![Gemini](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blue?logo=google-gemini)](https://ai.google.dev)
+[![Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748?logo=prisma)](https://prisma.io)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://docker.com)
 
-### Features
-1. **Dynamic Landing Page:** Enter a recipient email to initiate the workflow.
-2. **Beautiful Upload Experience:** Drag-and-drop files representing quarterly sales data.
-3. **Robust Processing Engine:** 
-   - Uses robust data parsers for accurate CSV/Excel extraction.
-   - Leverages **Google Gemini API** to generate a narrative.
-   - Operates resiliently utilizing a **Prisma + PostgreSQL** backend.
-4. **Instant Delivery:** Delivers beautifully formatted summaries directly using **Resend**.
-5. **Real-time Insights Dashboard:** Monitor every job's status and outcome seamlessly.
+Upload → AI Analysis → Anomaly Tagging → Email → ✅
+
+</div>
 
 ---
 
-### Run Locally via Docker
+## 🏗️ Architecture
 
-We use a unified Next.js Application approach that is multi-staged and easy to containerize.
+```
+┌───────────────────────────────────────────────────────────────────┐
+│                          Next.js (App Router)                     │
+│    ┌──────────────────┐             ┌────────────────────────┐    │
+│    │  Frontend  │             │   Next.js API Routes   │    │
+│    │ (Framer Motion)  │────────────▶│    (Edge/Serverless)   │    │
+│    └──────────────────┘             └───────────┬────────────┘    │
+│              ▲                                  │                 │
+│              │          ┌───────────────────────┼─────────────────┤
+│              │          │                       ▼                 │
+│              │    ┌─────┴─────┐           ┌───────────┐     ┌─────┴─────┐
+│              └────┤ PDF/Export│           │ Prisma ORM│     │ Resend API│
+│                   └───────────┘           └─────┬─────┘     └───────────┘
+│                                                 ▼                 │
+└─────────────────────────────────────────── PostgreSQL DB ─────────┘
+```
 
-1. **Clone the repository.**
-2. **Setup your environment properties:** Create a `.env` file referencing the `.env.example`.
-3. **Spin up the stack:**
-   Ensure Docker is running and run:
-   ```bash
-   docker-compose up -d --build
-   ```
-4. **Migrate the Database:**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-5. **View the Application:**
-   Navigate to `http://localhost:3000`
+### Data Flow
 
----
-
-### API Documentation (Swagger)
-A live documentation endpoint is available via the unified backend. Navigate to:
-- **`http://localhost:3000/docs`** to test endpoints securely and view schema definitions.
-
----
-
-### Endpoint Security Approach
-To meet the requirement for "Secured Endpoints," the application uses:
-- **Prisma Schema Constraints:** Avoided SQL injections seamlessly.
-- **Strict Typing:** Request bodies are type-checked using strict checks.
-- **Resource Abuse Protection:** All actions are tied to a standard predictable Job architecture (`uuid`-based tracking).
-- *(Note: In a true production environment with more time, standard Rate Limiting middlewares via Upstash Redis and robust Authentication flows (e.g. NextAuth) should be instituted).*
+1. **Upload** – User uploads `.csv`/`.xlsx` via the high-contrast upload widget.
+2. **Detection** – System triggers concurrent LLM chains for summary generation and **Anomaly Tagging**.
+3. **Storage** – Job status and parsed insights are persisted in PostgreSQL via **Prisma**.
+4. **Delivery** – The executive brief is dispatched instantly via the **Resend** mailer.
+5. **Interactive Q&A** – Users use "Ask Rabbit" to chat with their specific dataset context.
+6. **Reporting** – Completed jobs can be exported as high-fidelity **PDFs** locally.
 
 ---
 
-### CI/CD Automation
-The repo contains `.github/workflows/ci.yml` that checks code formatting, builds the Next.js static portions, and lints Prisma schemas automatically on push to the `main` branch.
+## 📂 Project Structure
+
+```
+rabbitai-agent/
+│
+├── app/                        # Next.js 15 (App Router)
+│   ├── api/                    # Serverless API Endpoints
+│   │   ├── jobs/               # Job CRUD & Batch operations
+│   │   ├── upload/             # File parsing & AI trigger
+│   │   ├── chat/               # "Ask Rabbit" LLM Q&A
+│   │   └── swagger/            # OpenAPI spec generation
+│   ├── dashboard/              # Insights & Monitoring UI
+│   ├── upload/                 # Real-time processing feedback
+│   └── docs/                   # Live Swagger UI
+│
+├── lib/                        # Shared Services
+│   ├── services/
+│   │   ├── llm.ts              # Gemini 1.5 Flash Integration
+│   │   ├── mailer.ts           # Resend Email Integration
+│   │   └── dataParser.ts       # CSV/XLSX Node parsers
+│   └── prisma.ts               # Database client
+│
+├── prisma/                     # Database Schema & Migrations
+│   ├── schema.prisma           # Unified data model (Job, ChatMessage)
+│   └── migrations/             # History of DB changes
+│
+├── components/                 # Shadcn/UI + Custom Components
+├── public/                     # Static assets
+├── Dockerfile                  # Multi-stage production build
+├── docker-compose.yml          # Full-stack local orchestration
+├── .github/workflows/          # CI Pipeline (Build, Lint, Validate)
+├── .env.example                # Environment template
+└── README.md                   # The Engineer's Log
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** ≥ 20
+- **Docker & Docker Compose**
+- API keys for [Google Gemini](https://aistudio.google.com/) and [Resend](https://resend.com)
+
+### 1. Clone & Configure
+
+```bash
+git clone https://github.com/tushar-Ruhela/rabbitai-agent.git
+cd rabbitai-agent
+
+# Setup local environment
+cp .env.example .env
+# Open .env and add your GEMINI_API_KEY and RESEND_API_KEY
+```
+
+### 2. Run with Docker (Recommended)
+
+```bash
+docker-compose up -d --build
+npx prisma db push # Sync the schema to the containerized DB
+```
+
+| Service  | URL                          |
+|----------|------------------------------|
+| Frontend | http://localhost:3000         |
+| Dashboard| http://localhost:3000/dashboard |
+| API Docs | http://localhost:3000/docs    |
+
+---
+
+## 📡 API Documentation
+
+Interactive Swagger docs are available locally at `/docs`.
+
+| Endpoint             | Method | Description                                |
+|----------------------|--------|--------------------------------------------|
+| `/api/jobs`          | GET    | Fetch all sales analysis records           |
+| `/api/jobs`          | POST   | Create analysis job placeholder            |
+| `/api/jobs/{id}/upload`| POST   | Upload file & trigger AI Anomaly detection |
+| `/api/jobs/{id}/chat`  | POST   | "Ask Rabbit" - Chat with specific dataset  |
+| `/api/jobs/{id}/email` | POST   | Forward report to additional recipients    |
+
+---
+
+## 🔐 Security & Design Decisions
+
+| Layer               | Implementation                                         |
+|---------------------|--------------------------------------------------------|
+| **Endpoint Security**| UUID-based job tracking + Sanitized Prisma queries     |
+| **Input Safety**    | Strict type-checking via TypeScript & Pydantic-like models|
+| **Isolation**       | PDF generation strictly strips classes to avoid lab() CSS leaks |
+| **UX Aesthetic**    | **Aesthetic**: High-contrast, premium flat design |
+| **Micro-interactions**| Framer Motion for physical press & smooth transitions |
+| **Reliability**     | Resilient background processing with progress tracking  |
+
+---
+
+## 📝 Engineer's Log — Design Choices
+
+### Why Gemini 1.5 Flash?
+Offers a massive context window (ideal for large sales datasets) with extreme speed. It generates high-fidelity summaries and detects anomalies far more accurately than legacy models.
+
+### The "Ask Rabbit" Engine
+Instead of a static summary, we implemented a context-aware chat. The system retrieves the job's summary and specific data insights to answer granular questions (e.g., *"Why did Home Appliances dip in March?"*).
+
+### UI Redesign
+The interface was transformed from generic "Glassmorphism" to a **Premium Style**:
+- Stark light-theme by default.
+- Thick 2px-4px borders and hard 4px shadows.
+- Bold, high-contrast typography using Inter.
+
+### PDF Export Strategy
+Implemented client-side PDF generation using `html2pdf.js`. To ensure robustness, we use an isolation bridge that strips app CSS to prevent modern color space browser bugs (`lab()` colors) from breaking the doc.
+
+---
+
+## 🚢 Deployment Guide (Vercel + Render)
+
+1. **Database:** Deploy a PostgreSQL instance on Render or Supabase and set `DATABASE_URL`.
+2. **Backend/Frontend:** Import repo to Vercel.
+3. **Environment:** Add `GEMINI_API_KEY`, `RESEND_API_KEY`, and `NEXT_PUBLIC_APP_URL`.
+4. **Build:** Use `npm run build`.
+
+---
+
+<div align="center">
+
+Made with ❤️ by **Tushar Ruhela** (2311981546) • **Chitkara University**
+
+</div>
