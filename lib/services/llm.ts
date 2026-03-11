@@ -14,7 +14,7 @@ export const generateSummary = async (data: any[]): Promise<string> => {
     `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash',
             contents: prompt,
         });
 
@@ -59,12 +59,12 @@ export const answerDataQuestion = async (data: any[], question: string, history:
             parts: [{ text: h.content }]
         }));
 
-        const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const chat = model.startChat({
-            history: chatHistory,
-            generationConfig: {
+        const chat = ai.chats.create({
+            model: 'gemini-1.5-flash',
+            history: chatHistory as any,
+            config: {
                 maxOutputTokens: 500,
-            },
+            }
         });
 
         const systemContext = `You are "RabbitAI", a specialized sales data assistant. 
@@ -72,9 +72,8 @@ export const answerDataQuestion = async (data: any[], question: string, history:
         Be concise, professional, and data-driven. 
         Context Data Sample: ${JSON.stringify(data.slice(0, 100))}`;
 
-        const result = await chat.sendMessage(`${systemContext}\n\nUser Question: ${question}`);
-        const response = await result.response;
-        return response.text();
+        const result = await chat.sendMessage({ message: `${systemContext}\n\nUser Question: ${question}` });
+        return result.text || "I'm sorry, I couldn't generate a response.";
     } catch (error) {
         console.error("Chat Error:", error);
         return "I'm sorry, I'm having trouble analyzing the data for your question right now.";
