@@ -57,7 +57,7 @@ export default function UploadPage() {
       setStatus("success");
       setTimeout(() => {
         router.push("/dashboard");
-      }, 1500);
+      }, 500);
     } catch (error) {
       console.error(error);
       setStatus("error");
@@ -121,8 +121,8 @@ export default function UploadPage() {
             {status === "uploading" && (
               <motion.div className="flex flex-col items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
-                <p className="font-medium text-white">Uploading & Analyzing...</p>
-                <p className="mt-1 text-xs text-gray-400">This might take a few moments...</p>
+                <p className="font-medium text-white">Uploading...</p>
+                <p className="mt-1 text-xs text-gray-400">Taking you back to the dashboard...</p>
               </motion.div>
             )}
 

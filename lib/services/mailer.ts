@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
 export const sendSummaryEmail = async (to: string, summaryHtml: string) => {
   try {
     const data = await resend.emails.send({
-      from: 'support.nippongo.app',
+      from: 'support@support.nippongo.app',
       to: [to],
       subject: 'Your AI-Generated Sales Data Summary',
       html: `

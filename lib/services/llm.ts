@@ -7,7 +7,7 @@ export const generateSummary = async (data: any[]): Promise<string> => {
         const prompt = `
       You are an expert Sales Analyst. Your job is to concisely summarize the following sales data into a professional narrative for executive leadership.
       Highlight key metrics, top performing products, regional insights, and any noticeable trends or anomalies.
-      Please format your response in clear HTML with headers, lists, and bold text for readability in an email.
+      Please format your response in clear HTML with headers, lists, and bold text for readability in an email, also give proper html only nothing else not no quotes unquotes '' or any kind of \`\` stuff.
 
       Data Sample (first 100 rows):
       ${JSON.stringify(data.slice(0, 100))}
