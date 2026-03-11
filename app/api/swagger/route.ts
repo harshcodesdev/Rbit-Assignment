@@ -9,7 +9,18 @@ export const GET = async () => {
             info: {
                 title: "Sales Insight Automator API",
                 version: "1.0",
+                description: "AI-powered sales analysis engine.",
             },
+            servers: [
+                {
+                    url: "https://rabbitai-tushar.vercel.app",
+                    description: "Production Server",
+                },
+                {
+                    url: "http://localhost:3000",
+                    description: "Local Development Server",
+                },
+            ],
             components: {
                 securitySchemes: {
                     BearerAuth: {

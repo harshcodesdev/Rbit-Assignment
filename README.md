@@ -10,6 +10,8 @@
 [![Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748?logo=prisma)](https://prisma.io)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://docker.com)
 
+### [🚀 Live Demo: rabbitai-tushar.vercel.app](https://rabbitai-tushar.vercel.app/)
+
 Upload → AI Analysis → Anomaly Tagging → Email → ✅
 
 </div>
@@ -109,11 +111,11 @@ docker-compose up -d --build
 npx prisma db push # Sync the schema to the containerized DB
 ```
 
-| Service  | URL                          |
-|----------|------------------------------|
-| Frontend | http://localhost:3000         |
-| Dashboard| http://localhost:3000/dashboard |
-| API Docs | http://localhost:3000/docs    |
+| Service   | Local URL                    | Live Production URL              |
+|-----------|------------------------------|----------------------------------|
+| Frontend  | http://localhost:3000        | [Link](https://rabbitai-tushar.vercel.app/) |
+| Dashboard | http://localhost:3000/dashboard | [Link](https://rabbitai-tushar.vercel.app/dashboard) |
+| API Docs  | http://localhost:3000/docs      | [Link](https://rabbitai-tushar.vercel.app/docs) |
 
 ---
 
@@ -169,6 +171,7 @@ Implemented client-side PDF generation using `html2pdf.js`. To ensure robustness
 2. **Backend/Frontend:** Import repo to Vercel.
 3. **Environment:** Add `GEMINI_API_KEY`, `RESEND_API_KEY`, and `NEXT_PUBLIC_APP_URL`.
 4. **Build:** Use `npm run build`.
+5. **Live:** Live instance: [rabbitai-tushar.vercel.app](https://rabbitai-tushar.vercel.app/)
 
 ---
 
