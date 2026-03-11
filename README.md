@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rabbit-Sync: Sales Insight Automator
 
-## Getting Started
+## The Engineer's Log
 
-First, run the development server:
+Welcome to **Rabbit-Sync**, an internal tool created for the RabbitAI sales team to instantly distill massive `.csv` and `.xlsx` figures into an actionable AI-generated executive briefing.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This repository serves as a functional, containerized prototype built under a 3-hour constraint as part of the AI Cloud DevOps Engineer evaluation.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Features
+1. **Dynamic Landing Page:** Enter a recipient email to initiate the workflow.
+2. **Beautiful Upload Experience:** Drag-and-drop files representing quarterly sales data.
+3. **Robust Processing Engine:** 
+   - Uses robust data parsers for accurate CSV/Excel extraction.
+   - Leverages **Google Gemini API** to generate a narrative.
+   - Operates resiliently utilizing a **Prisma + PostgreSQL** backend.
+4. **Instant Delivery:** Delivers beautifully formatted summaries directly using **Resend**.
+5. **Real-time Insights Dashboard:** Monitor every job's status and outcome seamlessly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Run Locally via Docker
 
-## Learn More
+We use a unified Next.js Application approach that is multi-staged and easy to containerize.
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository.**
+2. **Setup your environment properties:** Create a `.env` file referencing the `.env.example`.
+3. **Spin up the stack:**
+   Ensure Docker is running and run:
+   ```bash
+   docker-compose up -d --build
+   ```
+4. **Migrate the Database:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+5. **View the Application:**
+   Navigate to `http://localhost:3000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### API Documentation (Swagger)
+A live documentation endpoint is available via the unified backend. Navigate to:
+- **`http://localhost:3000/docs`** to test endpoints securely and view schema definitions.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Endpoint Security Approach
+To meet the requirement for "Secured Endpoints," the application uses:
+- **Prisma Schema Constraints:** Avoided SQL injections seamlessly.
+- **Strict Typing:** Request bodies are type-checked using strict checks.
+- **Resource Abuse Protection:** All actions are tied to a standard predictable Job architecture (`uuid`-based tracking).
+- *(Note: In a true production environment with more time, standard Rate Limiting middlewares via Upstash Redis and robust Authentication flows (e.g. NextAuth) should be instituted).*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+### CI/CD Automation
+The repo contains `.github/workflows/ci.yml` that checks code formatting, builds the Next.js static portions, and lints Prisma schemas automatically on push to the `main` branch.
